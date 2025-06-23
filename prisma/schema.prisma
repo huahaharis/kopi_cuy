@@ -23,3 +23,76 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model ItemGroups {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  group_name String
+  description String
+  items Items[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model TableNumbers {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  tableNumber Int
+  description String
+  isActive Boolean @default(true)
+  orders Orders[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Items {
+  id  String @id @default(auto()) @map("_id") @db.ObjectId
+  itemGroupid String
+  itemGroup ItemGroups @relation(fields: [itemGroupid], references: [id])
+  itemName  String
+  itemImage String
+  itemPrice Float
+  description String
+  item_qty Int
+  isActive Boolean @default(true)
+  orderItems OrderItems[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum OrderStatus {
+  Paid
+  Processing
+  Process
+  Cancelled
+}
+
+enum paymentMethodStatus {
+  Cash
+  Qris
+  Debit
+}
+
+model Orders {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  tableNumberId String
+  tableNumber TableNumbers @relation(fields: [tableNumberId], references: [id])
+  orderUser String
+  status OrderStatus
+  paymentMethod paymentMethodStatus
+  totalPrice Float
+  orederItems OrderItems[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt 
+}
+
+model OrderItems {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String
+  order Orders @relation(fields: [orderId], references: [id])
+  itemId String
+  item Items @relation(fields: [itemId], references: [id])
+  quantity Int
+  price Float
+  total_price Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
